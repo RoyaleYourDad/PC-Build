@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>#<%= tag %> - PC Builds</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="/"><span>PC Builds</span></a>
+    <a href="/"><span>Explore</span></a>
+    <% if (user) { %>
+      <a href="/create"><span>Create</span></a>
+      <a href="/my-items"><span>My Items</span></a>
+      <a href="/users"><span>Users</span></a>
+      <a href="/logout"><span>Logout</span></a>
+      <div class="mt-4 px-4 text-gray-400">Logged in as <%= user.name %></div>
+    <% } else { %>
+      <a href="/login"><span>Login</span></a>
+    <% } %>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1 class="text-2xl font-bold mb-6">Parts with #<%= tag %></h1>
+    <% if (parts.length === 0) { %>
+      <p class="text-gray-400">No parts found with this hashtag.</p>
+    <% } else { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% parts.forEach(part => { %>
+          <a href="/part/<%= part.id %>" class="part-card">
+            <img src="<%= part.thumbnail || 'https://via.placeholder.com/300x160' %>" alt="<%= part.name %>">
+            <div class="part-card-content">
+              <h3 class="text-lg font-semibold"><%= part.name %></h3>
+              <p class="text-gray-400 text-sm capitalize">Type: <%= part.type %></p>
+              <p class="text-gray-300 text-sm">By <%= part.user %></p>
+              <p class="text-green-400 font-medium">$<%= part.price %></p>
+              <% if (part.socket) { %>
+                <p class="text-gray-400 text-sm">Socket: <%= part.socket %></p>
+              <% } %>
+              <p class="text-gray-400 text-sm">
+                Hashtags:
+                <% part.hashtags.forEach(tag => { %>
+                  <a href="/hashtag/<%= tag.replace('#', '') %>" class="text-blue-400 hover:underline"><%= tag %></a>
+                <% }); %>
+                <% if (part.hashtags.length === 0) { %> None <% } %>
+              </p>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

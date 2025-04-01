@@ -1,0 +1,448 @@
+{
+  "users": [
+    {
+      "id": "1743148673789",
+      "name": "Ubaydulla",
+      "birthdate": "2009-07-24"
+    }
+  ],
+  "parts": [
+    {
+      "id": "1743152334289",
+      "userId": "1743148673789",
+      "name": "HyperX Pulsefire Haste 2",
+      "type": "other",
+      "socket": null,
+      "price": 50,
+      "hashtags": [
+        "#mouse. #hyperx",
+        "#gamingmouse"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743152452/ev4y9aqcwviljt8lkxip.jpg",
+      "previews": [
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743155479/fl1qirvrogesrwstoepr.jpg",
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743155479/o3bawwlj71zagnhpx22s.jpg",
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743155481/w5pdobo0ncs6m5yg28zf.jpg",
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743155482/eswacf7stcqoir4raz3e.jpg",
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743155483/owcpeg3a7dktqcn24l0t.jpg"
+      ],
+      "extraDetails": [
+        {
+          "name": "DPI",
+          "value": "26000"
+        },
+        {
+          "name": "Sensor",
+          "value": "HyperX 26K Sensor"
+        },
+        {
+          "name": "Polling Rate",
+          "value": "Up to 4000Hz (wireless), 1000hz wired"
+        },
+        {
+          "name": "Switches",
+          "value": "HyperX Optical Switches"
+        },
+        {
+          "name": "Weight",
+          "value": "61g~"
+        },
+        {
+          "name": "Connectivity",
+          "value": "Wireless 2.4GHz and wired USB-C"
+        },
+        {
+          "name": "Battery Life",
+          "value": "Up to 90 hours on the pro version"
+        },
+        {
+          "name": "telegram link:",
+          "value": "tg://resolve?domain=NEXUSPCFORTHEGAME&post=5474"
+        }
+      ]
+    },
+    {
+      "id": "1743156089959",
+      "userId": "1743148673789",
+      "name": "HyperX Pulsefire Haste",
+      "type": "other",
+      "socket": null,
+      "price": 38,
+      "hashtags": [
+        "#mouse",
+        "#hyperx",
+        "#gamingmouse"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743156088/sdlmvodu7igloesocusl.jpg",
+      "previews": [],
+      "extraDetails": [
+        {
+          "name": "DPI",
+          "value": "16000"
+        },
+        {
+          "name": "Sensor",
+          "value": "Pixart 3335"
+        },
+        {
+          "name": "IPS",
+          "value": "450 IPS"
+        },
+        {
+          "name": "Acceleration",
+          "value": "40G"
+        },
+        {
+          "name": "Switches",
+          "value": "TTC Golden Micro Dustproof Switches (rated for 60 million clicks)"
+        },
+        {
+          "name": "Polling Rate",
+          "value": "1000Hz"
+        },
+        {
+          "name": "Weight",
+          "value": "59g~"
+        },
+        {
+          "name": "Cable",
+          "value": "HyperFlex USB"
+        },
+        {
+          "name": "Buttons",
+          "value": "6 programmable buttons"
+        },
+        {
+          "name": "Features",
+          "value": "Ultra-light hex shell design"
+        },
+        {
+          "name": "Features",
+          "value": "Customizable with HyperX NGENUITY software"
+        },
+        {
+          "name": "Telegram link:",
+          "value": "tg://resolve?domain=NEXUSPCFORTHEGAME&post=5473"
+        }
+      ]
+    },
+    {
+      "id": "1743156495245",
+      "userId": "1743148673789",
+      "name": "LOGITECH G102",
+      "type": "other",
+      "socket": null,
+      "price": 20,
+      "hashtags": [
+        "#mouse",
+        "#logitech"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743156489/wankhhebu6ost2vvdrx4.jpg",
+      "previews": [
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743156493/znvieszvn4ldm4xjcq9a.jpg"
+      ],
+      "extraDetails": [
+        {
+          "name": "DPI",
+          "value": "200-8000"
+        },
+        {
+          "name": "Buttons",
+          "value": "6 programmable buttons"
+        },
+        {
+          "name": "RGB Lighting",
+          "value": "LIGHTSYNC RGB lighting, 16.8 million colors"
+        },
+        {
+          "name": "Weight",
+          "value": "85 g"
+        },
+        {
+          "name": "Cable Length",
+          "value": "2.1 meters"
+        },
+        {
+          "name": "Sensor",
+          "value": "Gaming-grade sensor"
+        },
+        {
+          "name": "Height",
+          "value": "116.6 mm"
+        },
+        {
+          "name": "Width",
+          "value": "62.15 mm"
+        },
+        {
+          "name": "Depth",
+          "value": "38.2 mm"
+        },
+        {
+          "name": "Additional ",
+          "value": "Onboard memory"
+        },
+        {
+          "name": "Additional ",
+          "value": "Logitech G HUB software compatibility for advanced customization"
+        },
+        {
+          "name": "Telegram link:",
+          "value": "tg://resolve?domain=NEXUSPCFORTHEGAME&post=5472"
+        }
+      ]
+    },
+    {
+      "id": "1743156699677",
+      "userId": "1743148673789",
+      "name": "RAZER DEATHADDER ESSENTIAL",
+      "type": "other",
+      "socket": null,
+      "price": 25,
+      "hashtags": [
+        "#mouse",
+        "#RAZER",
+        "#RAZERDEATHADDER"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743156696/jriipiljlgr6qsxyk8fo.jpg",
+      "previews": [
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743156698/vxv9q0gljdripwqmrbki.jpg"
+      ],
+      "extraDetails": [
+        {
+          "name": "DPI",
+          "value": "6,400"
+        },
+        {
+          "name": "Buttons",
+          "value": "5 independently programmable Hyperesponse buttons"
+        },
+        {
+          "name": "Switches",
+          "value": "Razer Mechanical Mouse Switches with a 10 million-click life cycle"
+        },
+        {
+          "name": "Polling Rate",
+          "value": "1000 Hz Ultrapolling"
+        },
+        {
+          "name": "Acceleration",
+          "value": "Up to 30 G"
+        },
+        {
+          "name": "IPS",
+          "value": "Up to 220"
+        },
+        {
+          "name": "Ergonomics",
+          "value": "right-handed"
+        },
+        {
+          "name": "Lighting",
+          "value": "Single-color green"
+        },
+        {
+          "name": "Software",
+          "value": "Razer Synapse 3 enabled"
+        },
+        {
+          "name": "Weight",
+          "value": "96g~"
+        },
+        {
+          "name": "Telegram link:",
+          "value": "tg://resolve?domain=NEXUSPCFORTHEGAME&post=5471"
+        }
+      ]
+    },
+    {
+      "id": "1743158892263",
+      "userId": "1743148673789",
+      "name": "E-YOSOO 737 MECHANICAL",
+      "type": "other",
+      "socket": null,
+      "price": 30,
+      "hashtags": [
+        "#keyboard",
+        "#mechanical"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743158888/svmepgldmwy9ltsm6kmx.jpg",
+      "previews": [
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743158889/gtihyvmcskxe3zyunowd.jpg",
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743158890/sxqn59h3rziiz2lqru13.jpg",
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743158891/lsw2gmvfdy1ga0rtwzyj.jpg"
+      ],
+      "extraDetails": [
+        {
+          "name": "Type",
+          "value": "Mechanical Keyboard"
+        },
+        {
+          "name": "Number of Keys",
+          "value": "87 keys"
+        },
+        {
+          "name": "Switches",
+          "value": "OUTEMU Blue switches"
+        },
+        {
+          "name": "Layout",
+          "value": "QWERTY "
+        },
+        {
+          "name": "Backlighting",
+          "value": "Blue backlight with various running modes"
+        },
+        {
+          "name": "Keycaps",
+          "value": "Double-shot injection keycaps"
+        },
+        {
+          "name": "Anti-ghosting",
+          "value": "Full 87 keys anti-ghosting"
+        },
+        {
+          "name": "Connectivity",
+          "value": "Wired USB"
+        },
+        {
+          "name": "Telegram link:",
+          "value": "tg://resolve?domain=NEXUSPCFORTHEGAME&post=5468"
+        }
+      ]
+    },
+    {
+      "id": "1743160645610",
+      "userId": "1743148673789",
+      "name": "E-YOOSO Z-94 Mechanical blue Switch 94",
+      "type": "other",
+      "socket": null,
+      "price": 27,
+      "hashtags": [
+        "#keyboard",
+        "#mechanical"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743160643/hpeop5m0fiivdwsalyd7.jpg",
+      "previews": [
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743160644/uvm0cc1ys077nkqzzh9i.jpg"
+      ],
+      "extraDetails": [
+        {
+          "name": "Type",
+          "value": "Mechanical Keyboard"
+        },
+        {
+          "name": "Layout",
+          "value": "94-Key Compact"
+        },
+        {
+          "name": "Switches",
+          "value": "OUTEMU Blue/Red"
+        },
+        {
+          "name": "Hot-swappable",
+          "value": "Yes"
+        },
+        {
+          "name": "Backlighting",
+          "value": "Varied (Monochrome/Rainbow)"
+        },
+        {
+          "name": "Keycaps",
+          "value": "PBT/ABS"
+        },
+        {
+          "name": "Anti-ghosting",
+          "value": "Full Key"
+        },
+        {
+          "name": "Connectivity",
+          "value": "Wired (USB)"
+        },
+        {
+          "name": "Design",
+          "value": "Standard/Transparent"
+        },
+        {
+          "name": "Cable Type",
+          "value": "often USB-C"
+        },
+        {
+          "name": "Telegram link:",
+          "value": "tg://resolve?domain=NEXUSPCFORTHEGAME&post=5467"
+        }
+      ]
+    },
+    {
+      "id": "1743486691534",
+      "userId": "1743148673789",
+      "name": "MSI G32C4X 32 FHD 250Hz",
+      "type": "other",
+      "socket": null,
+      "price": 250,
+      "hashtags": [
+        "#monitor",
+        "#cheap",
+        "#$250"
+      ],
+      "thumbnail": "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743486688/nuubmiqk5slvpiv4oesu.jpg",
+      "previews": [
+        "https://res.cloudinary.com/da3lnxm5o/image/upload/v1743486689/txczkdxbb8qd9awhuqya.jpg"
+      ],
+      "extraDetails": [
+        {
+          "name": "Screen Size",
+          "value": "32 inches"
+        },
+        {
+          "name": "Resolution",
+          "value": "FHD (1920 x 1080)"
+        },
+        {
+          "name": "Refresh Rate",
+          "value": "250Hz"
+        },
+        {
+          "name": "Panel Type",
+          "value": "VA "
+        },
+        {
+          "name": "Response Time",
+          "value": "1ms "
+        },
+        {
+          "name": "Aspect Ratio",
+          "value": "16:9"
+        },
+        {
+          "name": "Curvature",
+          "value": "1500R"
+        },
+        {
+          "name": "Viewing Angles",
+          "value": "178°"
+        },
+        {
+          "name": "Brightness",
+          "value": "250-300 nits"
+        },
+        {
+          "name": "Contrast ",
+          "value": "3000:1"
+        },
+        {
+          "name": "Display Colors",
+          "value": "16.7 Million"
+        },
+        {
+          "name": "Power Input",
+          "value": "100~240V"
+        },
+        {
+          "name": "Telegram link:",
+          "value": "tg://resolve?domain=xtechuzAbusaxiy&post=5921"
+        }
+      ]
+    }
+  ]
+}

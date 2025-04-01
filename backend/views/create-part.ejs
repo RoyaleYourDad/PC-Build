@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Part - PC Builds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-gray-900 text-white font-roboto">
+  <!-- Sidebar -->
+  <div class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full" id="sidebar">
+    <div class="p-4">
+      <a href="/" class="text-2xl font-bold text-white">PC Builds</a>
+    </div>
+    <nav class="mt-4">
+      <a href="/" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <i class="fas fa-compass mr-2"></i> Explore
+      </a>
+      <a href="/create" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <i class="fas fa-plus-circle mr-2"></i> Create
+      </a>
+      <a href="/my-items" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <i class="fas fa-box mr-2"></i> My Items
+      </a>
+      <a href="/users" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <i class="fas fa-users mr-2"></i> Users
+      </a>
+      <a href="/logout" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+      </a>
+      <div class="mt-4 px-4 text-gray-400 text-sm">
+        <i class="fas fa-user mr-2"></i> Logged in as <%= user.name %>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Menu Button -->
+  <div class="md:hidden fixed top-4 left-4 z-50">
+    <button id="menu-toggle" class="text-white focus:outline-none">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content md:ml-64 p-6 min-h-screen">
+    <h1 class="text-3xl font-bold mb-6">Create a New Part</h1>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+      <% if (error) { %>
+        <div class="bg-red-600 text-white p-4 rounded-md mb-6">
+          <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
+        </div>
+      <% } %>
+      <form action="/create-part" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <!-- Name -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-tag mr-2"></i> Part Name
+          </label>
+          <input type="text" id="name" name="name" value="<%= formData ? formData.name : '' %>" required
+                 class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Type -->
+        <div>
+          <label for="type" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-microchip mr-2"></i> Type
+          </label>
+          <select id="type" name="type" required
+                  class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onchange="toggleSocketField(this.value)">
+            <option value="" disabled <%= !formData ? 'selected' : '' %>>Select Type</option>
+            <option value="cpu" <%= formData && formData.type === 'cpu' ? 'selected' : '' %>>CPU</option>
+            <option value="other" <%= formData && formData.type === 'other' ? 'selected' : '' %>>Other</option>
+          </select>
+        </div>
+
+        <!-- Socket (Visible only for CPU) -->
+        <div id="socket-field" class="<%= formData && formData.type === 'cpu' ? '' : 'hidden' %>">
+          <label for="socket" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-plug mr-2"></i> Socket
+          </label>
+          <input type="text" id="socket" name="socket" value="<%= formData && formData.type === 'cpu' ? formData.socket : '' %>"
+                 class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Price -->
+        <div>
+          <label for="price" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-dollar-sign mr-2"></i> Price
+          </label>
+          <input type="number" id="price" name="price" step="0.01" value="<%= formData ? formData.price : '' %>" required
+                 class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Hashtags -->
+        <div>
+          <label for="hashtags" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-hashtag mr-2"></i> Hashtags (comma-separated)
+          </label>
+          <input type="text" id="hashtags" name="hashtags" value="<%= formData ? formData.hashtags : '' %>"
+                 placeholder="e.g., #gaming, #tech"
+                 class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Thumbnail -->
+        <div>
+          <label for="thumbnail" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-image mr-2"></i> Thumbnail Image
+          </label>
+          <input type="file" id="thumbnail" name="thumbnail" accept="image/*"
+                 class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Previews -->
+        <div>
+          <label for="previews" class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-images mr-2"></i> Preview Images (up to 5)
+          </label>
+          <input type="file" id="previews" name="previews" accept="image/*" multiple
+                 class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Extra Details -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">
+            <i class="fas fa-info-circle mr-2"></i> Extra Details
+          </label>
+          <div id="extra-details" class="space-y-4">
+            <% if (formData && formData.extraDetailsNames && formData.extraDetailsValues) { %>
+              <% const names = Array.isArray(formData.extraDetailsNames) ? formData.extraDetailsNames : [formData.extraDetailsNames]; %>
+              <% const values = Array.isArray(formData.extraDetailsValues) ? formData.extraDetailsValues : [formData.extraDetailsValues]; %>
+              <% names.forEach((name, index) => { %>
+                <% if (name && values[index]) { %>
+                  <div class="extra-detail flex space-x-2">
+                    <input type="text" name="extraDetailsNames" value="<%= name %>"
+                           placeholder="Detail Name (e.g., DPI)"
+                           class="w-1/2 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="extraDetailsValues" value="<%= values[index] %>"
+                           placeholder="Detail Value (e.g., 16000)"
+                           class="w-1/2 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="button" onclick="removeExtraDetail(this)"
+                            class="text-red-400 hover:text-red-500">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                <% } %>
+              <% }); %>
+            <% } %>
+            <div class="extra-detail flex space-x-2">
+              <input type="text" name="extraDetailsNames" placeholder="Detail Name (e.g., DPI)"
+                     class="w-1/2 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input type="text" name="extraDetailsValues" placeholder="Detail Value (e.g., 16000)"
+                     class="w-1/2 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <button type="button" onclick="removeExtraDetail(this)"
+                      class="text-red-400 hover:text-red-500">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+          <button type="button" onclick="addExtraDetail()"
+                  class="mt-2 text-blue-400 hover:text-blue-500 flex items-center">
+            <i class="fas fa-plus mr-2"></i> Add Another Detail
+          </button>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button type="submit"
+                  class="w-full bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-md hover:bg-blue-700 transition-colors duration-200">
+            <i class="fas fa-save mr-2"></i> Create Part
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript for Mobile Menu Toggle and Dynamic Form Fields -->
+  <script>
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // Toggle Socket Field Visibility
+    function toggleSocketField(type) {
+      const socketField = document.getElementById('socket-field');
+      socketField.classList.toggle('hidden', type !== 'cpu');
+    }
+
+    // Add Extra Detail Field
+    function addExtraDetail() {
+      const container = document.getElementById('extra-details');
+      const newField = document.createElement('div');
+      newField.className = 'extra-detail flex space-x-2';
+      newField.innerHTML = `
+        <input type="text" name="extraDetailsNames" placeholder="Detail Name (e.g., DPI)"
+               class="w-1/2 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="text" name="extraDetailsValues" placeholder="Detail Value (e.g., 16000)"
+               class="w-1/2 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button type="button" onclick="removeExtraDetail(this)"
+                class="text-red-400 hover:text-red-500">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      `;
+      container.appendChild(newField);
+    }
+
+    // Remove Extra Detail Field
+    function removeExtraDetail(button) {
+      const container = document.getElementById('extra-details');
+      if (container.children.length > 1) {
+        button.parentElement.remove();
+      }
+    }
+  </script>
+</body>
+</html>
