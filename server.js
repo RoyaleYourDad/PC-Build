@@ -4,45 +4,43 @@ const dotenv = require('dotenv');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const path = require('path');
-const fs = require('fs');
+const fetch = require('node-fetch').default; // Explicitly use default export for node-fetch v2
+const fs = require('fs'); // Still needed for file cleanup
 const multer = require('multer');
 
 dotenv.config();
 const app = express();
 
-// File to store data
-const DATA_FILE = 'data.json';
+// URL for grok-server
+const JSON_SERVER_URL = 'https://grok-server-production.up.railway.app/data';
 
-// Load data from file (or initialize if file doesn't exist or is invalid)
-let users = [];
-let parts = [];
-
-if (fs.existsSync(DATA_FILE)) {
+// Fetch data from grok-server
+async function fetchData() {
   try {
-    const fileContent = fs.readFileSync(DATA_FILE, 'utf8');
-    if (fileContent.trim() === '') {
-      users = [];
-      parts = [];
-    } else {
-      const data = JSON.parse(fileContent);
-      users = data.users || [];
-      parts = data.parts || [];
-    }
+    const response = await fetch(JSON_SERVER_URL);
+    if (!response.ok) throw new Error('Failed to fetch data from grok-server');
+    return await response.json();
   } catch (error) {
-    console.error('Error parsing data.json:', error.message);
-    users = [];
-    parts = [];
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ users, parts }, null, 2), 'utf8');
+    console.error(`[${new Date().toISOString()}] Error fetching data: ${error.message}`);
+    return { users: [], parts: [] }; // Fallback to empty data
   }
-} else {
-  fs.writeFileSync(DATA_FILE, JSON.stringify({ users: [], parts: [] }, null, 2), 'utf8');
 }
 
-// Function to save data to file
-const saveData = () => {
-  const data = { users, parts };
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-};
+// Save data to grok-server
+async function saveData(data) {
+  try {
+    const response = await fetch(JSON_SERVER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to save data to grok-server');
+    return await response.json();
+  } catch (error) {
+    console.error(`[${new Date().toISOString()}] Error saving data: ${error.message}`);
+    throw error;
+  }
+}
 
 // Multer setup for file uploads with validation
 const storage = multer.diskStorage({
@@ -104,9 +102,10 @@ const authenticate = (req, res, next) => {
 };
 
 // Middleware to check if the user owns the part
-const authorizePartOwner = (req, res, next) => {
+const authorizePartOwner = async (req, res, next) => {
   const partId = req.params.id;
-  const part = parts.find(p => p.id === partId);
+  const data = await fetchData();
+  const part = data.parts.find(p => p.id === partId);
   if (!part || part.userId !== req.session.user.id) {
     return res.status(403).send('Unauthorized');
   }
@@ -114,11 +113,12 @@ const authorizePartOwner = (req, res, next) => {
 };
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   try {
-    const populatedParts = parts.map(part => ({
+    const data = await fetchData();
+    const populatedParts = data.parts.map(part => ({
       ...part,
-      user: users.find(u => u.id === part.userId)?.name || 'Unknown',
+      user: data.users.find(u => u.id === part.userId)?.name || 'Unknown',
     }));
     res.render('index', { parts: populatedParts, user: req.session.user || null });
   } catch (error) {
@@ -139,16 +139,15 @@ app.get('/login', (req, res) => {
   res.render('login', { message });
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const { name, birthdate } = req.body;
   
-  // Validate inputs
   if (!name || !birthdate) {
     return res.render('login', { message: 'Please provide both username and birthdate.' });
   }
 
-  // Find the user
-  let user = users.find(u => u.name === name && u.birthdate === birthdate);
+  const data = await fetchData();
+  let user = data.users.find(u => u.name === name && u.birthdate === birthdate);
   
   if (!user) {
     return res.render('login', { message: 'Invalid username or birthdate. Please try again.' });
@@ -167,24 +166,22 @@ app.get('/register', (req, res) => {
   res.render('register', { message: null });
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const { name, birthdate } = req.body;
 
-  // Validate inputs
   if (!name || !birthdate) {
     return res.render('register', { message: 'Please provide both username and birthdate.' });
   }
 
-  // Check if user already exists
-  const existingUser = users.find(u => u.name === name && u.birthdate === birthdate);
+  const data = await fetchData();
+  const existingUser = data.users.find(u => u.name === name && u.birthdate === birthdate);
   if (existingUser) {
     return res.render('register', { message: 'User already exists. Please log in instead.' });
   }
 
-  // Create new user
   const user = { id: Date.now().toString(), name, birthdate };
-  users.push(user);
-  saveData();
+  data.users.push(user);
+  await saveData(user); // Send only the new user
 
   req.session.user = user;
   console.log(`[${new Date().toISOString()}] User registered and logged in:`, {
@@ -237,7 +234,6 @@ app.post('/create-part', authenticate, (req, res, next) => {
     let thumbnailUrl = null;
     let previewUrls = [];
 
-    // Upload thumbnail
     if (req.files['thumbnail']) {
       const filePath = req.files['thumbnail'][0].path;
       const fileStats = fs.statSync(filePath);
@@ -246,7 +242,7 @@ app.post('/create-part', authenticate, (req, res, next) => {
           userId: req.session.user.id,
           filePath,
         });
-        fs.unlinkSync(filePath); // Clean up empty file
+        fs.unlinkSync(filePath);
         return res.render('create-part', {
           user: req.session.user,
           error: 'The uploaded thumbnail file is empty. Please select a valid image.',
@@ -256,9 +252,7 @@ app.post('/create-part', authenticate, (req, res, next) => {
 
       try {
         const result = await cloudinary.uploader.upload(filePath, {
-          transformation: [
-            { width: 300, height: 200, crop: 'fill' },
-          ],
+          transformation: [{ width: 300, height: 200, crop: 'fill' }],
         });
         thumbnailUrl = result.secure_url;
         fs.unlinkSync(filePath);
@@ -276,7 +270,6 @@ app.post('/create-part', authenticate, (req, res, next) => {
       }
     }
 
-    // Upload preview images
     if (req.files['previews']) {
       for (const file of req.files['previews']) {
         const filePath = file.path;
@@ -286,7 +279,7 @@ app.post('/create-part', authenticate, (req, res, next) => {
             userId: req.session.user.id,
             filePath,
           });
-          fs.unlinkSync(filePath); // Clean up empty file
+          fs.unlinkSync(filePath);
           return res.render('create-part', {
             user: req.session.user,
             error: 'One of the uploaded preview files is empty. Please select valid images.',
@@ -296,9 +289,7 @@ app.post('/create-part', authenticate, (req, res, next) => {
 
         try {
           const result = await cloudinary.uploader.upload(filePath, {
-            transformation: [
-              { width: 600, height: 400, crop: 'fill' },
-            ],
+            transformation: [{ width: 600, height: 400, crop: 'fill' }],
           });
           previewUrls.push(result.secure_url);
           fs.unlinkSync(filePath);
@@ -317,7 +308,6 @@ app.post('/create-part', authenticate, (req, res, next) => {
       }
     }
 
-    // Process extra details
     const extraDetails = [];
     if (extraDetailsNames && extraDetailsValues) {
       const names = Array.isArray(extraDetailsNames) ? extraDetailsNames : [extraDetailsNames];
@@ -341,20 +331,21 @@ app.post('/create-part', authenticate, (req, res, next) => {
       previews: previewUrls,
       extraDetails,
     };
-    parts.push(part);
-    saveData();
+
+    await saveData(part); // Send only the new part to grok-server
     res.redirect('/');
   });
 });
 
-app.get('/part/:id', (req, res) => {
+app.get('/part/:id', async (req, res) => {
   try {
     const partId = req.params.id;
-    const part = parts.find(p => p.id === partId);
+    const data = await fetchData();
+    const part = data.parts.find(p => p.id === partId);
     if (!part) return res.status(404).send('Part not found');
     const populatedPart = {
       ...part,
-      user: users.find(u => u.id === part.userId)?.name || 'Unknown',
+      user: data.users.find(u => u.id === part.userId)?.name || 'Unknown',
     };
     res.render('part', { part: populatedPart, user: req.session.user || null });
   } catch (error) {
@@ -366,18 +357,18 @@ app.get('/part/:id', (req, res) => {
   }
 });
 
-app.get('/my-items', (req, res) => {
+app.get('/my-items', async (req, res) => {
   try {
     if (!req.session.user) {
       return res.render('my-items', { user: null, userItems: [] });
     }
 
-    // Fetch items created by the logged-in user from the parts array
-    const userItems = parts
+    const data = await fetchData();
+    const userItems = data.parts
       .filter(part => part.userId === req.session.user.id)
       .map(part => ({
         ...part,
-        user: req.session.user.name, // Populate the user field for rendering
+        user: req.session.user.name,
       }));
     res.render('my-items', { user: req.session.user, userItems: userItems || [] });
   } catch (error) {
@@ -389,10 +380,11 @@ app.get('/my-items', (req, res) => {
   }
 });
 
-app.get('/edit-part/:id', authenticate, authorizePartOwner, (req, res) => {
+app.get('/edit-part/:id', authenticate, authorizePartOwner, async (req, res) => {
   try {
     const partId = req.params.id;
-    const part = parts.find(p => p.id === partId);
+    const data = await fetchData();
+    const part = data.parts.find(p => p.id === partId);
     res.render('edit-part', { part, user: req.session.user, error: null });
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Error rendering edit-part: ${error.message}`, {
@@ -410,8 +402,8 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
         userId: req.session.user.id,
         file: req.files?.thumbnail?.[0]?.originalname || 'No file',
       });
-      const partId = req.params.id;
-      const part = parts.find(p => p.id === partId);
+      const data = await fetchData();
+      const part = data.parts.find(p => p.id === req.params.id);
       return res.render('edit-part', {
         part,
         user: req.session.user,
@@ -420,13 +412,13 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
     }
 
     const partId = req.params.id;
-    const partIndex = parts.findIndex(p => p.id === partId);
     const { name, type, socket, price, hashtags, extraDetailsNames, extraDetailsValues } = req.body;
 
-    let thumbnailUrl = parts[partIndex].thumbnail;
-    let previewUrls = parts[partIndex].previews || [];
+    const data = await fetchData();
+    const partIndex = data.parts.findIndex(p => p.id === partId);
+    let thumbnailUrl = data.parts[partIndex].thumbnail;
+    let previewUrls = data.parts[partIndex].previews || [];
 
-    // Upload new thumbnail if provided
     if (req.files['thumbnail']) {
       const filePath = req.files['thumbnail'][0].path;
       const fileStats = fs.statSync(filePath);
@@ -435,9 +427,9 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
           userId: req.session.user.id,
           filePath,
         });
-        fs.unlinkSync(filePath); // Clean up empty file
+        fs.unlinkSync(filePath);
         return res.render('edit-part', {
-          part: parts[partIndex],
+          part: data.parts[partIndex],
           user: req.session.user,
           error: 'The uploaded thumbnail file is empty. Please select a valid image.',
         });
@@ -445,9 +437,7 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
 
       try {
         const result = await cloudinary.uploader.upload(filePath, {
-          transformation: [
-            { width: 300, height: 200, crop: 'fill' },
-          ],
+          transformation: [{ width: 300, height: 200, crop: 'fill' }],
         });
         thumbnailUrl = result.secure_url;
         fs.unlinkSync(filePath);
@@ -458,14 +448,13 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
           stack: error.stack,
         });
         return res.render('edit-part', {
-          part: parts[partIndex],
+          part: data.parts[partIndex],
           user: req.session.user,
           error: `Failed to upload thumbnail: ${error.message}`,
         });
       }
     }
 
-    // Upload new preview images if provided
     if (req.files['previews']) {
       previewUrls = [];
       for (const file of req.files['previews']) {
@@ -476,9 +465,9 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
             userId: req.session.user.id,
             filePath,
           });
-          fs.unlinkSync(filePath); // Clean up empty file
+          fs.unlinkSync(filePath);
           return res.render('edit-part', {
-            part: parts[partIndex],
+            part: data.parts[partIndex],
             user: req.session.user,
             error: 'One of the uploaded preview files is empty. Please select valid images.',
           });
@@ -486,9 +475,7 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
 
         try {
           const result = await cloudinary.uploader.upload(filePath, {
-            transformation: [
-              { width: 600, height: 400, crop: 'fill' },
-            ],
+            transformation: [{ width: 600, height: 400, crop: 'fill' }],
           });
           previewUrls.push(result.secure_url);
           fs.unlinkSync(filePath);
@@ -499,7 +486,7 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
             stack: error.stack,
           });
           return res.render('edit-part', {
-            part: parts[partIndex],
+            part: data.parts[partIndex],
             user: req.session.user,
             error: `Failed to upload preview image: ${error.message}`,
           });
@@ -507,7 +494,6 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
       }
     }
 
-    // Process extra details
     const extraDetails = [];
     if (extraDetailsNames && extraDetailsValues) {
       const names = Array.isArray(extraDetailsNames) ? extraDetailsNames : [extraDetailsNames];
@@ -519,9 +505,8 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
       }
     }
 
-    // Update the part
-    parts[partIndex] = {
-      ...parts[partIndex],
+    const updatedPart = {
+      ...data.parts[partIndex],
       name,
       type,
       socket: type === 'cpu' ? socket : null,
@@ -531,27 +516,24 @@ app.post('/edit-part/:id', authenticate, authorizePartOwner, (req, res, next) =>
       previews: previewUrls,
       extraDetails,
     };
-    saveData();
+
+    await saveData(updatedPart); // Send only the updated part
     res.redirect('/my-items');
   });
 });
 
-app.get('/user/:id', authenticate, (req, res) => {
+app.get('/user/:id', authenticate, async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log(`Requested userId: ${userId} (type: ${typeof userId})`);
-    console.log('Users array:', users);
-    const targetUser = users.find(u => {
-      console.log(`Comparing user.id: ${u.id} (type: ${typeof u.id}) with userId: ${userId}`);
-      return u.id === userId;
-    });
+    const data = await fetchData();
+    const targetUser = data.users.find(u => u.id === userId);
     if (!targetUser) {
       console.log(`User with id ${userId} not found`);
       return res.status(404).send('User not found');
     }
-    const userParts = parts.filter(part => part.userId === userId).map(part => ({
+    const userParts = data.parts.filter(part => part.userId === userId).map(part => ({
       ...part,
-      user: users.find(u => u.id === part.userId)?.name || 'Unknown',
+      user: data.users.find(u => u.id === part.userId)?.name || 'Unknown',
     }));
     res.render('user-parts', {
       user: req.session.user,
@@ -567,15 +549,11 @@ app.get('/user/:id', authenticate, (req, res) => {
   }
 });
 
-app.get('/users', authenticate, (req, res) => {
+app.get('/users', authenticate, async (req, res) => {
   try {
-    // Calculate partCount for each user
-    const usersWithPartCount = users.map(user => {
-      console.log(`User ID: ${user.id} (type: ${typeof user.id})`);
-      const partCount = parts.filter(part => {
-        console.log(`Part userId: ${part.userId} (type: ${typeof part.userId})`);
-        return part.userId === user.id;
-      }).length;
+    const data = await fetchData();
+    const usersWithPartCount = data.users.map(user => {
+      const partCount = data.parts.filter(part => part.userId === user.id).length;
       return { ...user, partCount };
     });
     res.render('users', { user: req.session.user, users: usersWithPartCount });
@@ -588,15 +566,16 @@ app.get('/users', authenticate, (req, res) => {
   }
 });
 
-app.get('/hashtag/:tag', (req, res) => {
+app.get('/hashtag/:tag', async (req, res) => {
   try {
     const tag = req.params.tag;
-    const hashtag = `#${tag}`; // Add the # prefix to match the stored format
-    const filteredParts = parts
+    const hashtag = `#${tag}`;
+    const data = await fetchData();
+    const filteredParts = data.parts
       .filter(part => part.hashtags.includes(hashtag))
       .map(part => ({
         ...part,
-        user: users.find(u => u.id === part.userId)?.name || 'Unknown',
+        user: data.users.find(u => u.id === part.userId)?.name || 'Unknown',
       }));
     res.render('hashtag', { parts: filteredParts, tag: hashtag, user: req.session.user || null });
   } catch (error) {
