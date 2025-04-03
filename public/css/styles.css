@@ -103,6 +103,20 @@ body {
   background-color: #2b6cb0; /* bg-blue-700 */
 }
 
+/* styles.css */
+.hashtag, .my-items, .user-parts {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.my-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
 /* Hashtag Links */
 .hashtag-links a {
   margin-right: 0.25rem;
