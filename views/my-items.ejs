@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>My Items - PC Builds</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,11 +14,21 @@
       background-size: 200% 200%;
       animation: gradientShift 15s ease infinite;
     }
+
     @keyframes gradientShift {
-      0% { background-position: 0% 0%; }
-      50% { background-position: 100% 100%; }
-      100% { background-position: 0% 0%; }
+      0% {
+        background-position: 0% 0%;
+      }
+
+      50% {
+        background-position: 100% 100%;
+      }
+
+      100% {
+        background-position: 0% 0%;
+      }
     }
+
     .part-card {
       background: rgba(30, 40, 60, 0.9);
       border: 1px solid rgba(100, 150, 255, 0.3);
@@ -26,11 +37,13 @@
       min-height: 300px;
       padding-top: 40px;
     }
+
     .part-card:hover {
       transform: translateY(-5px) scale(1.05);
       box-shadow: 0 0 20px rgba(100, 150, 255, 0.5);
       border-color: #6496ff;
     }
+
     .edit-button {
       position: absolute;
       top: 10px;
@@ -42,45 +55,83 @@
       transition: all 0.3s ease;
       font-size: 0.875rem;
     }
+
     .edit-button:hover {
       box-shadow: 0 0 15px rgba(0, 180, 216, 0.8);
       transform: scale(1.1);
       text-decoration: none;
     }
+
     .hashtag-button {
       display: inline-block;
-      background: #4b5563; /* bg-gray-700 */
-      color: #e5e7eb; /* text-gray-200 */
-      padding: 0.25rem 0.75rem; /* px-3 py-1 */
-      border-radius: 9999px; /* rounded-full */
-      font-size: 0.75rem; /* text-xs */
-      font-weight: 500; /* font-medium */
+      background: #4b5563;
+      /* bg-gray-700 */
+      color: #e5e7eb;
+      /* text-gray-200 */
+      padding: 0.25rem 0.75rem;
+      /* px-3 py-1 */
+      border-radius: 9999px;
+      /* rounded-full */
+      font-size: 0.75rem;
+      /* text-xs */
+      font-weight: 500;
+      /* font-medium */
       margin-right: 6px;
       margin-bottom: 6px;
-      transition: background-color 0.2s ease; /* transition-colors duration-200 */
+      transition: background-color 0.2s ease;
+      /* transition-colors duration-200 */
     }
+
     .hashtag-button:hover {
-      background: #6b7280; /* hover:bg-gray-600 */
+      background: #6b7280;
+      /* hover:bg-gray-600 */
       text-decoration: none;
     }
+    /* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00b4d8, #7209b7);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00d4f8, #9209d7);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+}
   </style>
 </head>
+
 <body class="text-white font-roboto min-h-screen">
-  <div class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full" id="sidebar">
+  <div
+    class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full"
+    id="sidebar">
     <div class="p-4">
       <a href="/" class="text-2xl font-bold text-white">PC Builds</a>
     </div>
     <nav class="mt-4">
-      <a href="/" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-compass mr-2"></i> Explore</a>
+      <a href="/" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
+          class="fas fa-compass mr-2"></i> Explore</a>
       <% if (user) { %>
-        <a href="/create" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-plus-circle mr-2"></i> Create</a>
-        <a href="/my-items" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-box mr-2"></i> My Items</a>
-        <a href="/users" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-users mr-2"></i> Users</a>
-        <a href="/logout" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
-        <div class="mt-4 px-4 text-gray-400 text-sm"><i class="fas fa-user mr-2"></i> Logged in as <%= user.name %></div>
-      <% } else { %>
-        <a href="/login" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-sign-in-alt mr-2"></i> Login</a>
-      <% } %>
+        <a href="/create" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
+            class="fas fa-plus-circle mr-2"></i> Create</a>
+        <a href="/my-items" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
+            class="fas fa-box mr-2"></i> My Items</a>
+        <a href="/users" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
+            class="fas fa-users mr-2"></i> Users</a>
+        <a href="/logout" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
+            class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+        <div class="mt-4 px-4 text-gray-400 text-sm"><i class="fas fa-user mr-2"></i> Logged in as <%= user.name %>
+        </div>
+        <% } else { %>
+          <a href="/login" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
+              class="fas fa-sign-in-alt mr-2"></i> Login</a>
+          <% } %>
     </nav>
   </div>
 
@@ -96,40 +147,55 @@
     <h1 class="text-4xl font-bold mb-8 text-center text-blue-400 drop-shadow-lg">My Items</h1>
     <% if (!user) { %>
       <p class="text-gray-400 text-center">Please log in to view your items.</p>
-    <% } else if (userItems.length === 0) { %>
-      <p class="text-gray-400 text-center">You haven't created any items yet. <a href="/create-part" class="text-blue-400 hover:underline">Create one now!</a></p>
-    <% } else { %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        <% userItems.forEach(item => { %>
-          <div class="part-card p-4 rounded-lg">
-            <a href="/edit-part/<%= item.id %>" class="edit-button inline-block text-white hover:text-white"><i class="fas fa-edit mr-1"></i> Edit</a>
-            <a href="/part/<%= item.id %>">
-              <img src="<%= item.thumbnail || 'https://via.placeholder.com/300x200' %>" alt="<%= item.name %>" class="w-full h-40 object-cover rounded-md mb-3">
-            </a>
-            <div>
-              <a href="/part/<%= item.id %>">
-                <h3 class="text-lg font-medium text-white truncate hover:text-blue-400 transition-colors duration-200"><%= item.name %></h3>
-              </a>
-              <div class="space-y-1 mt-2 text-sm">
-                <div class="flex justify-between"><span class="text-gray-400">Type:</span><span class="text-gray-400 capitalize"><%= item.type %></span></div>
-                <div class="flex justify-between"><span class="text-green-400">Price:</span><span class="text-green-400">$<%= item.price %></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Public:</span><span class="text-gray-400"><%= item.isPublic ? 'Yes' : 'No' %></span></div>
-                <% if (item.hashtags && item.hashtags.length > 0) { %>
-                  <div class="mt-2">
-                    <span class="text-gray-400">Hashtags:</span>
-                    <div class="flex flex-wrap gap-2 mt-1">
-                      <% item.hashtags.forEach((tag) => { %>
-                        <a href="/hashtag/<%= tag.slice(1) %>" class="hashtag-button"><%= tag %></a>
-                      <% }) %>
-                    </div>
+      <% } else if (userItems.length===0) { %>
+        <p class="text-gray-400 text-center">You haven't created any items yet. <a href="/create-part"
+            class="text-blue-400 hover:underline">Create one now!</a></p>
+        <% } else { %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <% userItems.forEach(item=> { %>
+              <div class="part-card p-4 rounded-lg">
+                <a href="/edit-part/<%= item.id %>" class="edit-button inline-block text-white hover:text-white"><i
+                    class="fas fa-edit mr-1"></i> Edit</a>
+                <a href="/part/<%= item.id %>">
+                  <img src="<%= item.thumbnail || 'https://via.placeholder.com/300x200' %>" alt="<%= item.name %>"
+                    class="w-full h-40 object-cover rounded-md mb-3">
+                </a>
+                <div>
+                  <a href="/part/<%= item.id %>">
+                    <h3
+                      class="text-lg font-medium text-white truncate hover:text-blue-400 transition-colors duration-200">
+                      <%= item.name %>
+                    </h3>
+                  </a>
+                  <div class="space-y-1 mt-2 text-sm">
+                    <div class="flex justify-between"><span class="text-gray-400">Type:</span><span
+                        class="text-gray-400 capitalize">
+                        <%= item.type %>
+                      </span></div>
+                    <div class="flex justify-between"><span class="text-green-400">Price:</span><span
+                        class="text-green-400">$<%= item.price %></span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Public:</span><span
+                        class="text-gray-400">
+                        <%= item.isPublic ? 'Yes' : 'No' %>
+                      </span></div>
+                    <% if (item.hashtags && item.hashtags.length> 0) { %>
+                      <div class="mt-2">
+                        <span class="text-gray-400">Hashtags:</span>
+                        <div class="flex flex-wrap gap-2 mt-1">
+                          <% item.hashtags.forEach((tag)=> { %>
+                            <a href="/hashtag/<%= tag.slice(1) %>" class="hashtag-button">
+                              <%= tag %>
+                            </a>
+                            <% }) %>
+                        </div>
+                      </div>
+                      <% } %>
                   </div>
-                <% } %>
+                </div>
               </div>
-            </div>
+              <% }) %>
           </div>
-        <% }) %>
-      </div>
-    <% } %>
+          <% } %>
   </div>
 
   <script>
@@ -140,4 +206,5 @@
     });
   </script>
 </body>
+
 </html>

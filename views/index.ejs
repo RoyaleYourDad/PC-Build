@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>PC Builds</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,70 +8,39 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/styles.css">
   <style>
-    body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 15s ease infinite;
-    }
-
-    @keyframes gradientShift {
-      0% {
-        background-position: 0% 0%;
-      }
-
-      50% {
-        background-position: 100% 100%;
-      }
-
-      100% {
-        background-position: 0% 0%;
-      }
-    }
-
     .filter-container {
       background: rgba(20, 30, 50, 0.9);
       border: 1px solid rgba(100, 150, 255, 0.3);
       box-shadow: 0 0 20px rgba(100, 150, 255, 0.2);
     }
-
     .part-card {
       background: rgba(30, 40, 60, 0.9);
       border: 1px solid rgba(100, 150, 255, 0.3);
       transition: all 0.3s ease;
     }
-
     .part-card:hover {
       transform: translateY(-5px) scale(1.05);
       box-shadow: 0 0 20px rgba(100, 150, 255, 0.5);
       border-color: #6496ff;
     }
-
-    input,
-    select {
+    input, select {
       background: rgba(30, 40, 60, 0.8);
       border: 1px solid rgba(100, 150, 255, 0.5);
       transition: all 0.3s ease;
     }
-
-    input:hover,
-    select:hover,
-    input:focus,
-    select:focus {
+    input:hover, select:hover, input:focus, select:focus {
       background: rgba(40, 50, 70, 0.8);
       border-color: #6496ff;
       box-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
     }
-
     .neon-button {
       background: linear-gradient(90deg, #00b4d8, #7209b7);
       box-shadow: 0 0 15px rgba(0, 180, 216, 0.5);
       transition: all 0.3s ease;
     }
-
     .neon-button:hover {
       box-shadow: 0 0 25px rgba(0, 180, 216, 0.8);
     }
-
     .hashtag-button {
       display: inline-block;
       background: #4b5563;
@@ -85,40 +53,46 @@
       margin-bottom: 6px;
       transition: background-color 0.2s ease;
     }
-
     .hashtag-button:hover {
       background: #6b7280;
-      /* hover:bg-gray-600 */
       text-decoration: none;
     }
+    /* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00b4d8, #7209b7);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00d4f8, #9209d7);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+}
   </style>
 </head>
-
 <body class="text-white font-roboto min-h-screen">
-  <div
-    class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full"
-    id="sidebar">
+  <div id="progress-bar"></div>
+  <div class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full" id="sidebar">
     <div class="p-4">
       <a href="/" class="text-2xl font-bold text-white">PC Builds</a>
     </div>
     <nav class="mt-4">
-      <a href="/" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
-          class="fas fa-compass mr-2"></i> Explore</a>
+      <a href="/" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-compass mr-2"></i> Explore</a>
       <% if (user) { %>
-        <a href="/create" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
-            class="fas fa-plus-circle mr-2"></i> Create</a>
-        <a href="/my-items" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
-            class="fas fa-box mr-2"></i> My Items</a>
-        <a href="/users" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
-            class="fas fa-users mr-2"></i> Users</a>
-        <a href="/logout" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
-            class="fas fa-sign-out-alt mr-2"></i> Logout</a>
-        <div class="mt-4 px-4 text-gray-400 text-sm"><i class="fas fa-user mr-2"></i> Logged in as <%= user.name %>
-        </div>
-        <% } else { %>
-          <a href="/login" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i
-              class="fas fa-sign-in-alt mr-2"></i> Login</a>
-          <% } %>
+        <a href="/create" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-plus-circle mr-2"></i> Create</a>
+        <a href="/my-items" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-box mr-2"></i> My Items</a>
+        <a href="/users" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-users mr-2"></i> Users</a>
+        <a href="/logout" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+        <div class="mt-4 px-4 text-gray-400 text-sm"><i class="fas fa-user mr-2"></i> Logged in as <%= user.name %></div>
+      <% } else { %>
+        <a href="/login" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white"><i class="fas fa-sign-in-alt mr-2"></i> Login</a>
+      <% } %>
     </nav>
   </div>
 
@@ -134,95 +108,69 @@
     <h1 class="text-4xl font-bold mb-8 text-center text-blue-400 drop-shadow-lg">Explore Parts</h1>
     <div class="filter-container p-6 rounded-xl mb-6">
       <form method="GET" action="/" class="flex flex-col sm:flex-row gap-4">
-        <input type="text" name="search" placeholder="Search parts..." value="<%= filters.search || '' %>"
-          class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3">
+        <input type="text" name="search" placeholder="Search parts..." value="<%= filters.search || '' %>" class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3">
         <select name="type" class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">All Types</option>
-          <% types.forEach(type=> { %>
-            <option value="<%= type %>" <%=filters.type===type ? 'selected' : '' %>><%= type %>
-            </option>
-            <% }) %>
+          <% types.forEach(type => { %>
+            <option value="<%= type %>" <%= filters.type === type ? 'selected' : '' %>><%= type %></option>
+          <% }) %>
         </select>
-        <input type="number" name="minPrice" placeholder="Min Price" value="<%= filters.minPrice || '' %>"
-          class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/4">
-        <input type="number" name="maxPrice" placeholder="Max Price" value="<%= filters.maxPrice || '' %>"
-          class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/4">
-        <input type="text" name="details" placeholder="Details (e.g., DPI 16000)" value="<%= filters.details || '' %>"
-          class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3">
+        <input type="number" name="minPrice" placeholder="Min Price" value="<%= filters.minPrice || '' %>" class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/4">
+        <input type="number" name="maxPrice" placeholder="Max Price" value="<%= filters.maxPrice || '' %>" class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/4">
+        <input type="text" name="details" placeholder="Details (e.g., DPI 16000)" value="<%= filters.details || '' %>" class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3">
         <select name="sort" class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">Sort By</option>
-          <option value="price-asc" <%=filters.sort==='price-asc' ? 'selected' : '' %>>Price: Low to High</option>
-          <option value="price-desc" <%=filters.sort==='price-desc' ? 'selected' : '' %>>Price: High to Low</option>
-          <option value="name" <%=filters.sort==='name' ? 'selected' : '' %>>Name</option>
+          <option value="price-asc" <%= filters.sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+          <option value="price-desc" <%= filters.sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
+          <option value="name" <%= filters.sort === 'name' ? 'selected' : '' %>>Name</option>
         </select>
-        <button type="submit" class="neon-button px-4 py-2 text-white rounded-md"><i class="fas fa-filter mr-2"></i>
-          Filter</button>
+        <button type="submit" class="neon-button px-4 py-2 text-white rounded-md"><i class="fas fa-filter mr-2"></i> Filter</button>
       </form>
     </div>
 
-    <% if (parts.length===0) { %>
-      <p class="text-gray-400 text-center">No parts available. <% if (user) { %><a href="/create"
-            class="text-blue-400 hover:underline">Create one now!</a>
-          <% } %>
-      </p>
-      <% } else { %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          <% parts.forEach(part=> { %>
-            <div class="part-card p-4 rounded-lg">
+    <% if (parts.length === 0) { %>
+      <p class="text-gray-400 text-center">No parts available. <% if (user) { %><a href="/create" class="text-blue-400 hover:underline">Create one now!</a><% } %></p>
+    <% } else { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <% parts.forEach(part => { %>
+          <div class="part-card p-4 rounded-lg">
+            <a href="/part/<%= part.id %>">
+              <img src="<%= part.thumbnail || 'https://via.placeholder.com/300x200' %>" alt="<%= part.name %>" class="w-full h-40 object-cover rounded-md mb-3">
+            </a>
+            <div>
               <a href="/part/<%= part.id %>">
-                <img src="<%= part.thumbnail || 'https://via.placeholder.com/300x200' %>" alt="<%= part.name %>"
-                  class="w-full h-40 object-cover rounded-md mb-3">
+                <h3 class="text-lg font-medium text-white truncate hover:text-blue-400 transition-colors duration-200"><%= part.name %></h3>
               </a>
-              <div>
-                <a href="/part/<%= part.id %>">
-                  <h3
-                    class="text-lg font-medium text-white truncate hover:text-blue-400 transition-colors duration-200">
-                    <%= part.name %>
-                  </h3>
-                </a>
-                <div class="space-y-1 mt-2 text-sm">
-                  <div class="flex justify-between"><span class="text-gray-400">Type:</span><span
-                      class="text-gray-400 capitalize">
-                      <%= part.type %>
-                    </span></div>
-                  <div class="flex justify-between"><span class="text-gray-300">By:</span><span class="text-gray-300">
-                      <%= part.user %>
-                    </span></div>
-                  <div class="flex justify-between"><span class="text-green-400">Price:</span><span
-                      class="text-green-400">$<%= part.price %></span></div>
-                  <% if (part.extraDetails && part.extraDetails.length> 0) { %>
-                    <% const firstDetail=part.extraDetails[0]; %>
-                      <div class="flex justify-between"><span class="text-gray-400">
-                          <%= firstDetail.name %>:
-                        </span><span class="text-gray-400">
-                          <% if (firstDetail.value.startsWith('http://') || firstDetail.value.startsWith('https://') ||
-                            firstDetail.value.startsWith('tg://')) { %><a href="<%= firstDetail.value %>"
-                              target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline break-all">
-                              <%= firstDetail.value %>
-                            </a>
-                            <% } else { %>
-                              <%= firstDetail.value %>
-                                <% } %>
-                        </span></div>
-                      <% } %>
-                        <% if (part.hashtags && part.hashtags.length> 0) { %>
-                          <div class="mt-2">
-                            <span class="text-gray-400">Hashtags:</span>
-                            <div class="flex flex-wrap gap-2 mt-1">
-                              <% part.hashtags.forEach((tag)=> { %>
-                                <a href="/hashtag/<%= tag.slice(1) %>" class="hashtag-button">
-                                  <%= tag %>
-                                </a>
-                                <% }) %>
-                            </div>
-                          </div>
-                          <% } %>
-                </div>
+              <div class="space-y-1 mt-2 text-sm">
+                <div class="flex justify-between"><span class="text-gray-400">Type:</span><span class="text-gray-400 capitalize"><%= part.type %></span></div>
+                <div class="flex justify-between"><span class="text-gray-300">By:</span><span class="text-gray-300"><%= part.user %></span></div>
+                <div class="flex justify-between"><span class="text-green-400">Price:</span><span class="text-green-400">$<%= part.price %></span></div>
+                <% if (part.extraDetails && part.extraDetails.length > 0) { %>
+                  <% const firstDetail = part.extraDetails[0]; %>
+                  <div class="flex justify-between"><span class="text-gray-400"><%= firstDetail.name %>:</span><span class="text-gray-400">
+                    <% if (firstDetail.value.startsWith('http://') || firstDetail.value.startsWith('https://') || firstDetail.value.startsWith('tg://')) { %>
+                      <a href="<%= firstDetail.value %>" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline break-all"><%= firstDetail.value %></a>
+                    <% } else { %>
+                      <%= firstDetail.value %>
+                    <% } %>
+                  </span></div>
+                <% } %>
+                <% if (part.hashtags && part.hashtags.length > 0) { %>
+                  <div class="mt-2">
+                    <span class="text-gray-400">Hashtags:</span>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                      <% part.hashtags.forEach((tag) => { %>
+                        <a href="/hashtag/<%= tag.slice(1) %>" class="hashtag-button"><%= tag %></a>
+                      <% }) %>
+                    </div>
+                  </div>
+                <% } %>
               </div>
             </div>
-            <% }) %>
-        </div>
-        <% } %>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
   </div>
 
   <script>
@@ -233,5 +181,4 @@
     });
   </script>
 </body>
-
 </html>

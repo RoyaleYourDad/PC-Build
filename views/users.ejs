@@ -7,8 +7,86 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    /* Gradient Background */
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    /* Progress Bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #00b4d8, #7209b7, #00b4d8);
+      background-size: 200% 100%;
+      animation: gradientMove 2s infinite;
+      z-index: 9999;
+      transition: width 0.3s ease-out, opacity 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* Content Transition */
+    #content-wrapper {
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    #content-wrapper.fade-out {
+      opacity: 0;
+    }
+    #content-wrapper.fade-in {
+      opacity: 1;
+    }
+
+    /* User Container */
+    .user-container {
+      background: rgba(20, 30, 50, 0.9);
+      border: 1px solid rgba(100, 150, 255, 0.3);
+      box-shadow: 0 0 20px rgba(100, 150, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .user-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(100, 150, 255, 0.4);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(20, 30, 50, 0.9);
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #00b4d8, #7209b7);
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #00d4f8, #9209d7);
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-roboto min-h-screen">
+<body class="text-white font-roboto min-h-screen">
+  <div id="progress-bar"></div>
   <div class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full" id="sidebar">
     <div class="p-4">
       <a href="/" class="text-2xl font-bold text-white">PC Builds</a>
@@ -35,16 +113,18 @@
     </button>
   </div>
 
-  <div class="main-content md:ml-64 p-6">
-    <h1 class="text-3xl font-bold mb-6 text-center">Users</h1>
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+  <div id="content-wrapper" class="main-content md:ml-64 p-6">
+    <h1 class="text-4xl font-bold mb-8 text-center text-blue-400 drop-shadow-lg">Users</h1>
+    <div class="user-container p-6 rounded-xl max-w-2xl mx-auto">
       <% if (users.length === 0) { %>
         <p class="text-gray-400 text-center">No users found.</p>
       <% } else { %>
         <ul class="space-y-4">
           <% users.forEach(u => { %>
-            <li class="flex justify-between items-center">
-              <a href="/user/<%= u.id %>" class="text-blue-400 hover:underline"><%= u.name %></a>
+            <li class="flex justify-between items-center p-2 hover:bg-gray-700 rounded-md transition-colors duration-200">
+              <a href="/user/<%= u.id %>" class="text-blue-400 hover:underline flex items-center">
+                <i class="fas fa-user mr-2"></i><%= u.name %>
+              </a>
               <span class="text-gray-400">Items: <%= u.itemCount || 0 %></span>
             </li>
           <% }) %>
@@ -54,10 +134,109 @@
   </div>
 
   <script>
+    // Sidebar Toggle
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.getElementById('sidebar');
     menuToggle.addEventListener('click', () => {
       sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // Page Transition with Progress Bar
+    function handleNavigation(e) {
+      const link = e.target.closest('a[href^="/"]');
+      if (!link || e.ctrlKey || e.metaKey || link.target === '_blank') return;
+
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      const progressBar = document.getElementById('progress-bar');
+      const contentWrapper = document.getElementById('content-wrapper');
+
+      // Start Progress Bar Animation
+      progressBar.style.width = '0';
+      progressBar.style.opacity = '1';
+      let width = 0;
+      const progressInterval = setInterval(() => {
+        width = Math.min(width + 5, 80);
+        progressBar.style.width = `${width}%`;
+      }, 50);
+
+      // Fade Out Content
+      contentWrapper.classList.add('fade-out');
+
+      fetch(href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => {
+          if (!response.ok) throw new Error('Network error');
+          return response.text();
+        })
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newTitle = doc.querySelector('title').textContent;
+          const newContent = doc.querySelector('#content-wrapper').innerHTML;
+
+          // Complete Progress Bar
+          clearInterval(progressInterval);
+          progressBar.style.width = '100%';
+          
+          setTimeout(() => {
+            // Update Content
+            document.title = newTitle;
+            contentWrapper.innerHTML = newContent;
+            contentWrapper.classList.remove('fade-out');
+            contentWrapper.classList.add('fade-in');
+
+            // Reset Progress Bar
+            setTimeout(() => {
+              progressBar.style.opacity = '0';
+              progressBar.style.width = '0';
+              contentWrapper.classList.remove('fade-in');
+            }, 300);
+
+            history.pushState({}, newTitle, href);
+          }, 200);
+        })
+        .catch(err => {
+          console.error('Navigation error:', err);
+          clearInterval(progressInterval);
+          progressBar.style.opacity = '0';
+          progressBar.style.width = '0';
+          window.location.href = href; // Fallback
+        });
+    }
+
+    // Attach Click Handler
+    document.addEventListener('click', handleNavigation);
+
+    // Handle Back/Forward Navigation
+    window.addEventListener('popstate', () => {
+      const progressBar = document.getElementById('progress-bar');
+      const contentWrapper = document.getElementById('content-wrapper');
+      progressBar.style.opacity = '1';
+
+      fetch(location.pathname, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => response.text())
+        .then(html => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const newContent = doc.querySelector('#content-wrapper').innerHTML;
+
+          progressBar.style.width = '100%';
+          contentWrapper.classList.add('fade-out');
+
+          setTimeout(() => {
+            contentWrapper.innerHTML = newContent;
+            contentWrapper.classList.remove('fade-out');
+            contentWrapper.classList.add('fade-in');
+            setTimeout(() => {
+              progressBar.style.opacity = '0';
+              progressBar.style.width = '0';
+              contentWrapper.classList.remove('fade-in');
+            }, 300);
+          }, 200);
+        })
+        .catch(err => {
+          console.error('Popstate error:', err);
+          window.location.reload();
+        });
     });
   </script>
 </body>

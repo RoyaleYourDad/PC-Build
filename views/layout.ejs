@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'PC Builds' %></title>
+  <!-- Persistent Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* Gradient Background */
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    /* Progress Bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #00b4d8, #7209b7, #00b4d8);
+      background-size: 200% 100%;
+      animation: gradientMove 2s infinite;
+      z-index: 9999;
+      transition: width 0.2s ease-out;
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* Content Transition */
+    #content-wrapper {
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    #content-wrapper.fade-out {
+      opacity: 0;
+    }
+    #content-wrapper.fade-in {
+      opacity: 1;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(20, 30, 50, 0.9);
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #00b4d8, #7209b7);
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #00d4f8, #9209d7);
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+    }
+  </style>
+</head>
+<body class="text-white font-roboto min-h-screen">
+  <div id="progress-bar"></div>
+  <%- include('partials/sidebar') %>
+  <div class="md:hidden fixed top-4 left-4 z-50">
+    <button id="menu-toggle" class="text-white focus:outline-none">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  </div>
+  <div id="content-wrapper" class="main-content md:ml-64 p-6">
+    <%- body %>
+  </div>
+
+  <script>
+    // Sidebar Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // Enhanced Page Transition with Progress Bar
+    document.addEventListener('click', async (e) => {
+      const link = e.target.closest('a[href^="/"]');
+      if (!link || e.ctrlKey || e.metaKey || link.target === '_blank') return;
+
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      const progressBar = document.getElementById('progress-bar');
+      const contentWrapper = document.getElementById('content-wrapper');
+
+      // Start Progress Bar
+      progressBar.style.width = '0';
+      progressBar.style.display = 'block';
+      contentWrapper.classList.add('fade-out');
+
+      let width = 0;
+      const progressInterval = setInterval(() => {
+        width = Math.min(width + 5, 80);
+        progressBar.style.width = `${width}%`;
+      }, 50);
+
+      try {
+        const response = await fetch(href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const html = await response.text();
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newTitle = doc.querySelector('title').textContent;
+        const newContent = doc.querySelector('#content-wrapper').innerHTML;
+
+        // Update Content
+        clearInterval(progressInterval);
+        progressBar.style.width = '100%';
+        setTimeout(() => {
+          document.title = newTitle;
+          contentWrapper.innerHTML = newContent;
+          contentWrapper.classList.remove('fade-out');
+          contentWrapper.classList.add('fade-in');
+          progressBar.style.width = '0';
+          setTimeout(() => {
+            progressBar.style.display = 'none';
+            contentWrapper.classList.remove('fade-in');
+          }, 300);
+        }, 200);
+        history.pushState({}, newTitle, href);
+      } catch (err) {
+        console.error('Page load error:', err);
+        clearInterval(progressInterval);
+        progressBar.style.width = '0';
+        progressBar.style.display = 'none';
+        window.location.href = href; // Fallback
+      }
+    });
+
+    // Handle Back/Forward Navigation
+    window.addEventListener('popstate', async () => {
+      const progressBar = document.getElementById('progress-bar');
+      const contentWrapper = document.getElementById('content-wrapper');
+      progressBar.style.display = 'block';
+      contentWrapper.classList.add('fade-out');
+
+      const response = await fetch(location.pathname, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const newContent = doc.querySelector('#content-wrapper').innerHTML;
+
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+        contentWrapper.innerHTML = newContent;
+        contentWrapper.classList.remove('fade-out');
+        contentWrapper.classList.add('fade-in');
+        progressBar.style.width = '0';
+        setTimeout(() => {
+          progressBar.style.display = 'none';
+          contentWrapper.classList.remove('fade-in');
+        }, 300);
+      }, 200);
+    });
+  </script>
+</body>
+</html>

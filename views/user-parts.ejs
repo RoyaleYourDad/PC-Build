@@ -8,16 +8,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/styles.css">
   <style>
-    body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 15s ease infinite;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 0%; }
-      50% { background-position: 100% 100%; }
-      100% { background-position: 0% 0%; }
-    }
     .part-card {
       background: rgba(30, 40, 60, 0.9);
       border: 1px solid rgba(100, 150, 255, 0.3);
@@ -30,23 +20,41 @@
     }
     .hashtag-button {
       display: inline-block;
-      background: #4b5563; /* bg-gray-700 */
-      color: #e5e7eb; /* text-gray-200 */
-      padding: 0.25rem 0.75rem; /* px-3 py-1 */
-      border-radius: 9999px; /* rounded-full */
-      font-size: 0.75rem; /* text-xs */
-      font-weight: 500; /* font-medium */
+      background: #4b5563;
+      color: #e5e7eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
       margin-right: 6px;
       margin-bottom: 6px;
-      transition: background-color 0.2s ease; /* transition-colors duration-200 */
+      transition: background-color 0.2s ease;
     }
     .hashtag-button:hover {
-      background: #6b7280; /* hover:bg-gray-600 */
+      background: #6b7280;
       text-decoration: none;
     }
+    /* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00b4d8, #7209b7);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00d4f8, #9209d7);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+}
   </style>
 </head>
 <body class="text-white font-roboto min-h-screen">
+  <div id="progress-bar"></div>
   <div class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-50 md:translate-x-0 -translate-x-full" id="sidebar">
     <div class="p-4">
       <a href="/" class="text-2xl font-bold text-white">PC Builds</a>
@@ -76,7 +84,7 @@
   <div class="main-content md:ml-64 p-6">
     <h1 class="text-4xl font-bold mb-8 text-center text-blue-400 drop-shadow-lg"><%= userData.name %>'s Parts</h1>
     <% if (parts.length === 0) { %>
-      <p class="text-gray-400 text-center"><%= userData.name %> has no public parts.</p>
+      <p class="text-gray-400 text-center">No public parts available from <%= userData.name %>.</p>
     <% } else { %>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         <% parts.forEach(part => { %>

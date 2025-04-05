@@ -138,7 +138,12 @@ const authorizePartOwner = async (req, res, next) => {
   }
   next();
 };
-
+app.use((req, res, next) => {
+  if (req.get('X-Requested-With') === 'XMLHttpRequest') {
+    res.set('Content-Type', 'text/html');
+  }
+  next();
+});
 // Logging middleware
 app.use((req, res, next) => {
   (`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -495,6 +500,7 @@ app.get('/my-items', async (req, res) => {
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Error rendering my-items: ${error.message}`);
     res.status(500).send('Internal Server Error');
+    res.render('my-items', { user: req.user, userItems: req.userItems });
   }
 });
 
@@ -520,6 +526,7 @@ app.get('/user/:userId', async (req, res) => {
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Error rendering user-parts: ${error.message}`);
     res.status(500).send('Internal Server Error');
+    res.render('user-parts', { user: req.user, userData: req.userData, parts: req.parts });
   }
 });
 
@@ -553,11 +560,11 @@ app.get('/part/:partId', async (req, res) => {
 app.get('/users', authenticate, async (req, res) => {
   try {
     const data = await fetchData();
-    const usersWithPartCount = data.users.map(user => ({
+    const usersWithItemCount = data.users.map(user => ({
       ...user,
-      partCount: data.parts.filter(part => part.userId === user.id).length,
+      itemCount: data.parts.filter(part => part.userId === user.id).length, // Changed partCount to itemCount
     }));
-    res.render('users', { user: req.session.user, users: usersWithPartCount });
+    res.render('users', { user: req.session.user, users: usersWithItemCount });
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Error rendering users: ${error.message}`);
     res.status(500).send('Internal Server Error');
